@@ -1,4 +1,5 @@
 using DiGi.Core.Classes;
+using System.Globalization;
 
 namespace DiGi.SQLite
 {
@@ -22,7 +23,7 @@ namespace DiGi.SQLite
                 return null;
             }
 
-            return string.Format("{0}_{1}", Constants.Table.Name.Prefix.Type, uniqueId);
+            return string.Format(CultureInfo.CurrentCulture, "{0}_{1}", Constants.Table.Name.Prefix.Type, uniqueId);
         }
     }
 }

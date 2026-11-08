@@ -5,6 +5,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -16,7 +17,7 @@ namespace DiGi.SQLite.Classes
     /// </summary>
     public class SQLiteWrapper : Wrapper
     {
-        private bool disposed = false;
+        private bool disposed;
         private SqliteConnection? sqliteConnection;
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace DiGi.SQLite.Classes
         /// <summary>
         /// Gets or sets the connection string used to connect to the SQLite database.
         /// </summary>
-        public string? ConnectionString { get; set; } = null;
+        public string? ConnectionString { get; set; }
 
         /// <summary>
         /// Releases the resources used by the <see cref="SQLiteWrapper"/>.
@@ -126,7 +127,7 @@ namespace DiGi.SQLite.Classes
                 {
                     Dictionary<string, WrapperItem> dictionary = [];
 
-                    StringBuilder stringBuilder = new(string.Format("SELECT UniqueReference, JsonNode, Checksum FROM {0} WHERE ", tableName));
+                    StringBuilder stringBuilder = new(string.Format(CultureInfo.CurrentCulture, "SELECT UniqueReference, JsonNode, Checksum FROM {0} WHERE ", tableName));
                     for (int i = 0; i < wrapperItems_Temp.Count; i++)
                     {
                         stringBuilder.Append($"UniqueReference = @value{i}");
@@ -192,7 +193,7 @@ namespace DiGi.SQLite.Classes
             {
                 List<string> names = [];
 
-                sqliteCommand.CommandText = string.Format("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name LIKE '{0}_%'", Table.Name.Prefix.Type);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name LIKE '{0}_%'", Table.Name.Prefix.Type);
 
                 using (var reader = sqliteCommand.ExecuteReader())
                 {
@@ -206,7 +207,7 @@ namespace DiGi.SQLite.Classes
 
                 for (int i = 0; i < count; i++)
                 {
-                    sqliteCommand.CommandText = string.Format("SELECT UniqueReference FROM {0} LIMIT 1", names[i]);
+                    sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "SELECT UniqueReference FROM {0} LIMIT 1", names[i]);
 
                     object? result = sqliteCommand.ExecuteScalar();
 
@@ -265,7 +266,7 @@ namespace DiGi.SQLite.Classes
             HashSet<UniqueReference> uniqueReferences_Temp = [];
             using (SqliteCommand sqliteCommand = new() { Connection = sqliteConnection })
             {
-                sqliteCommand.CommandText = string.Format("SELECT UniqueReference FROM {0}", tableName);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "SELECT UniqueReference FROM {0}", tableName);
 
                 using SqliteDataReader sqliteDataReader = sqliteCommand.ExecuteReader();
 
@@ -338,10 +339,10 @@ namespace DiGi.SQLite.Classes
                     continue;
                 }
 
-                sqliteCommand.CommandText = string.Format(@"CREATE TABLE IF NOT EXISTS {0} (Id INTEGER PRIMARY KEY AUTOINCREMENT, UniqueReference TEXT NOT NULL UNIQUE, JsonNode TEXT NOT NULL, Checksum TEXT)", tableName);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, @"CREATE TABLE IF NOT EXISTS {0} (Id INTEGER PRIMARY KEY AUTOINCREMENT, UniqueReference TEXT NOT NULL UNIQUE, JsonNode TEXT NOT NULL, Checksum TEXT)", tableName);
                 sqliteCommand.ExecuteNonQuery();
 
-                sqliteCommand.CommandText = string.Format("INSERT OR REPLACE INTO {0} (UniqueReference, JsonNode, Checksum) VALUES (@UniqueReference, @JsonNode, @Checksum)", tableName);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "INSERT OR REPLACE INTO {0} (UniqueReference, JsonNode, Checksum) VALUES (@UniqueReference, @JsonNode, @Checksum)", tableName);
 
                 sqliteCommand.Parameters.Clear();
 

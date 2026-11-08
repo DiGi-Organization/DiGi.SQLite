@@ -2,6 +2,7 @@ using DiGi.Core.Interfaces;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DiGi.SQLite
 {
@@ -30,10 +31,6 @@ namespace DiGi.SQLite
                     sqliteConnection.Open();
 
                     result = ToDiGi(sqliteConnection, func);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
                 }
                 finally
                 {
@@ -95,7 +92,7 @@ namespace DiGi.SQLite
 
             foreach (Tuple<int, Type> tuple in tuples)
             {
-                sqliteCommand.CommandText = string.Format("SELECT Json FROM {0}", string.Format("Type_{0}", tuple.Item1));
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "SELECT Json FROM {0}", string.Format(CultureInfo.CurrentCulture, "Type_{0}", tuple.Item1));
 
                 using SqliteDataReader sqliteDataReader = sqliteCommand.ExecuteReader();
 

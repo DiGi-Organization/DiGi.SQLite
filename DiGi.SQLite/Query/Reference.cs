@@ -1,4 +1,5 @@
 using DiGi.Core.Interfaces;
+using System.Globalization;
 
 namespace DiGi.SQLite
 {
@@ -22,7 +23,7 @@ namespace DiGi.SQLite
                 return uniqueObject.UniqueId;
             }
 
-            return Core.Convert.ToSystem_String(serializableObject)?.GetHashCode().ToString();
+            return Core.Convert.ToSystem_String(serializableObject)?.GetHashCode().ToString(CultureInfo.CurrentCulture);
         }
     }
 }

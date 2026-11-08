@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DiGi.SQLite
 {
@@ -30,10 +31,6 @@ namespace DiGi.SQLite
                     sqliteConnection.Open();
 
                     result = ToSQLite(serializableObjects, sqliteConnection);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
                 }
                 finally
                 {
@@ -104,14 +101,14 @@ namespace DiGi.SQLite
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.AddWithValue("@FullTypeName", fullTypeName);
 
-                int typeId = System.Convert.ToInt32(sqliteCommand.ExecuteScalar());
+                int typeId = System.Convert.ToInt32(sqliteCommand.ExecuteScalar(), CultureInfo.CurrentCulture);
 
-                string tableName = string.Format("Type_{0}", typeId);
+                string tableName = string.Format(CultureInfo.CurrentCulture, "Type_{0}", typeId);
 
-                sqliteCommand.CommandText = string.Format(@"CREATE TABLE IF NOT EXISTS {0} (Id INTEGER PRIMARY KEY AUTOINCREMENT, Reference TEXT NOT NULL UNIQUE, Json TEXT NOT NULL)", tableName);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, @"CREATE TABLE IF NOT EXISTS {0} (Id INTEGER PRIMARY KEY AUTOINCREMENT, Reference TEXT NOT NULL UNIQUE, Json TEXT NOT NULL)", tableName);
                 sqliteCommand.ExecuteNonQuery();
 
-                sqliteCommand.CommandText = string.Format("INSERT OR REPLACE INTO {0} (Reference, Json) VALUES (@Reference, @Json)", tableName);
+                sqliteCommand.CommandText = string.Format(CultureInfo.CurrentCulture, "INSERT OR REPLACE INTO {0} (Reference, Json) VALUES (@Reference, @Json)", tableName);
 
                 sqliteCommand.Parameters.Clear();
 

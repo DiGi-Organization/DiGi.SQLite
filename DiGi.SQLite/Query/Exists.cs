@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 namespace DiGi.SQLite
 {
@@ -25,7 +26,7 @@ namespace DiGi.SQLite
 
             sqliteCommand.Parameters.Clear();
 
-            return System.Convert.ToInt32(result) > 0;
+            return System.Convert.ToInt32(result, CultureInfo.CurrentCulture) > 0;
         }
     }
 }
